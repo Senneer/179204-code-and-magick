@@ -47,7 +47,7 @@ window.renderStatistics = function (ctx, names, times) {
     if (names[i] === 'Вы') {
       ctx.fillStyle = 'rgba(255, 0, 0, 1)';
     } else {
-      ctx.fillStyle = 'rgba(0, 0, 255, ' + Math.random() * 1 + ')';
+      ctx.fillStyle = 'rgba(0, 0, 255, ' + Math.random() + ')';
     }
 
     var barHeight = -(MAX_BAR_HEIGHT * times[i]) / maxTime;
