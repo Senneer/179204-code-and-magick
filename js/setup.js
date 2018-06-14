@@ -1,7 +1,11 @@
 'use strict';
 
-document.querySelector('.setup').classList.remove('hidden');
 document.querySelector('.setup-similar').classList.remove('hidden');
+
+var KEYCODES = {
+  esc: 27,
+  enter: 13
+};
 
 var WIZARDS_NUMBER = 4;
 
@@ -10,7 +14,17 @@ var SECOND_NAMES = ['да Марья', 'Верон', 'Мирабелла', 'Ва
 var COAT_COLORS_RGB = ['101, 137, 164', '241, 43, 107', '146, 100, 161', '56, 159, 117', '215, 210, 55', '0, 0, 0'];
 var EYES_COLORS = ['black', 'red', 'blue', 'yellow', 'green'];
 
-var similarWizardsList = document.querySelector('.setup-similar-list');
+var DOMStrings = {
+  similarWizardsList: '.setup-similar-list',
+  setup: '.setup',
+  setupOpenBtn: '.setup-open',
+  setupOpenBtnIcon: '.setup-open-icon',
+  setupCloseBtn: '.setup-close',
+  setupNameInp: '.setup-user-name',
+  setupSubmitBtn: '.setup-submit'
+}
+
+var similarWizardsList = document.querySelector(DOMStrings.similarWizardsList);
 var similarWizardTemplate = document.querySelector('#similar-wizard-template')
   .content
   .querySelector('.setup-similar-item');
@@ -40,9 +54,65 @@ function generateWizardNode(obj) {
   return wizardElement;
 }
 
-for (var i = 0; i < WIZARDS_NUMBER; i++) {
-  var wizardData = generateWizardData();
-  similarWizards.push(wizardData);
-  var wizardNode = generateWizardNode(wizardData);
-  similarWizardsList.appendChild(wizardNode);
+function popupEscPressHandler(e) {
+  if (e.keyCode === KEYCODES.esc) {
+    closePopup();
+  }
 }
+
+function popupEnterPressHandler(e) {
+  var classList = e.target.classList;
+  if (e.keyCode === KEYCODES.enter) {
+    if (classList.contains(DOMStrings.setupCloseBtn)) {
+      closePopup();
+    } else if (classList.contains(DOMStrings.setupSubmitBtn)) {
+      submitSetup();
+    }
+  }
+}
+
+function openPopup() {
+  document.querySelector(DOMStrings.setup).classList.remove('hidden');
+  document.addEventListener('keydown', popupEscPressHandler);
+  document.querySelector(DOMStrings.setupCloseBtn).addEventListener('keydown', popupEnterPressHandler);
+  document.querySelector(DOMStrings.setupSubmitBtn).addEventListener('click', submitSetup);
+  document.querySelector(DOMStrings.setupSubmitBtn).addEventListener('keydown', popupEnterPressHandler);
+}
+
+function closePopup() {
+  document.querySelector(DOMStrings.setup).classList.add('hidden');
+  document.removeEventListener('keydown', popupEscPressHandler);
+  document.querySelector(DOMStrings.setupCloseBtn).removeEventListener('keydown', popupEnterPressHandler);
+  document.querySelector(DOMStrings.setupSubmitBtn).removeEventListener('click', submitSetup);
+  document.querySelector(DOMStrings.setupSubmitBtn).removeEventListener('keydown', popupEnterPressHandler);
+}
+
+function submitSetup() {
+
+}
+
+function setupEventListeners() {
+  document.querySelector(DOMStrings.setupOpenBtn).addEventListener('click', openPopup);
+  document.querySelector(DOMStrings.setupOpenBtnIcon).addEventListener('keydown', function (e) {
+    if (e.keyCode === KEYCODES.enter) {
+      openPopup(e);
+    }
+  });
+  document.querySelector(DOMStrings.setupCloseBtn).addEventListener('click', closePopup);
+  document.querySelector(DOMStrings.setupNameInp).addEventListener('keydown', function (e) {
+    e.stopPropagation();
+  });
+}
+
+function init() {
+  for (var i = 0; i < WIZARDS_NUMBER; i++) {
+    var wizardData = generateWizardData();
+    similarWizards.push(wizardData);
+    var wizardNode = generateWizardNode(wizardData);
+    similarWizardsList.appendChild(wizardNode);
+  }
+
+  setupEventListeners();
+}
+
+init();
